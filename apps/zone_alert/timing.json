@@ -1,0 +1,154 @@
+{
+ "repeats": 3,
+ "gpu": "NVIDIA GeForce RTX 5060 Ti",
+ "rows": [
+  {
+   "seq": "MOT17-04-FRCNN",
+   "model": "plain",
+   "thr": 0.8,
+   "ms_median": {
+    "read": 5.776,
+    "detect": 11.539,
+    "track": 6.007,
+    "alert": 0.215,
+    "draw+write": 4.462
+   },
+   "pipeline_fps": {
+    "median": 56.3,
+    "min": 55.8,
+    "max": 59.6,
+    "runs": [
+     59.6,
+     55.8,
+     56.3
+    ]
+   },
+   "end_to_end_fps": {
+    "median": 35.6,
+    "min": 35.5,
+    "max": 37.4,
+    "runs": [
+     37.4,
+     35.5,
+     35.6
+    ]
+   },
+   "events": {
+    "INTRUSION": 111,
+    "LOITERING": 9
+   },
+   "codec": "h264 (avc1)"
+  },
+  {
+   "seq": "MOT17-04-FRCNN",
+   "model": "s3x",
+   "thr": 0.8,
+   "ms_median": {
+    "read": 5.684,
+    "detect": 11.27,
+    "track": 5.811,
+    "alert": 0.205,
+    "draw+write": 4.264
+   },
+   "pipeline_fps": {
+    "median": 57.8,
+    "min": 54.9,
+    "max": 60.3,
+    "runs": [
+     60.3,
+     57.8,
+     54.9
+    ]
+   },
+   "end_to_end_fps": {
+    "median": 36.4,
+    "min": 35.7,
+    "max": 37.7,
+    "runs": [
+     37.7,
+     36.4,
+     35.7
+    ]
+   },
+   "events": {
+    "INTRUSION": 99,
+    "LOITERING": 9
+   },
+   "codec": "h264 (avc1)"
+  },
+  {
+   "seq": "MOT17-09-FRCNN",
+   "model": "plain",
+   "thr": 0.8,
+   "ms_median": {
+    "read": 5.421,
+    "detect": 11.125,
+    "track": 1.959,
+    "alert": 0.062,
+    "draw+write": 3.685
+   },
+   "pipeline_fps": {
+    "median": 76.1,
+    "min": 70.7,
+    "max": 78.2,
+    "runs": [
+     78.2,
+     76.1,
+     70.7
+    ]
+   },
+   "end_to_end_fps": {
+    "median": 44.6,
+    "min": 44.2,
+    "max": 45.7,
+    "runs": [
+     45.7,
+     44.6,
+     44.2
+    ]
+   },
+   "events": {
+    "INTRUSION": 26,
+    "LOITERING": 3
+   },
+   "codec": "h264 (avc1)"
+  },
+  {
+   "seq": "MOT17-09-FRCNN",
+   "model": "s3x",
+   "thr": 0.8,
+   "ms_median": {
+    "read": 5.6,
+    "detect": 11.337,
+    "track": 1.931,
+    "alert": 0.061,
+    "draw+write": 3.77
+   },
+   "pipeline_fps": {
+    "median": 75.0,
+    "min": 68.2,
+    "max": 78.0,
+    "runs": [
+     78.0,
+     75.0,
+     68.2
+    ]
+   },
+   "end_to_end_fps": {
+    "median": 43.9,
+    "min": 42.2,
+    "max": 45.0,
+    "runs": [
+     45.0,
+     43.9,
+     42.2
+    ]
+   },
+   "events": {
+    "INTRUSION": 27,
+    "LOITERING": 0
+   },
+   "codec": "h264 (avc1)"
+  }
+ ]
+}

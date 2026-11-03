@@ -1,0 +1,15 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "edge-far-pedestrian-mot: anisotropic P3 grids for tracking far, small pedestrians on edge devices"
+authors:
+  - family-names: Jeung
+    given-names: In Ho
+version: 0.1.0
+license: AGPL-3.0-only
+keywords:
+  - multi-object tracking
+  - small object detection
+  - edge AI
+  - YOLO
+  - pedestrian

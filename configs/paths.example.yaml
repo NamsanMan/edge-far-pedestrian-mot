@@ -1,0 +1,42 @@
+# efpmot path configuration.
+# Copy this file to configs/paths.yaml (git-ignored) and edit it. Set the environment variable EFPMOT_PATHS to read
+# another file instead. Relative paths are resolved against the repository root; null means "not set / not used".
+# Dataset folders are only read. Everything the code writes goes under `outputs` (and `derived` for converted labels).
+# How to download and lay out each dataset: docs/DATA.md.
+
+data:
+  # DSEC-Det (dsec.ifi.uzh.ch + github.com/uzh-rpg/dsec-det). Layout under this root:
+  #   images/{train,test}/<seq>/images/left/distorted/*.png      (RGB already remapped to the 640x480 event view)
+  #   labels/{train,test}/<seq>/object_detections/left/tracks.npy
+  #   meta/{train,test}/<seq>/images/timestamps.txt              (image timestamps from the DSEC image archives)
+  dsec_det: data/dsec_det
+  dsec_images: null          # optional faster copy of <dsec_det>/images with the same layout (e.g. on an SSD)
+
+  # MOT17 (motchallenge.net), train split, the FRCNN copy of each sequence: <root>/MOT17-XX-FRCNN/{img1,gt,seqinfo.ini}
+  mot17_train: data/MOT17/train
+  mot17_images: null         # optional faster copy of <mot17_train> (same layout; only img1/ is read from it)
+
+  # VisDrone2019-MOT: <root>/VisDrone2019-MOT-{train,val,test-dev}/{sequences,annotations}
+  visdrone_mot: data/visdrone_mot
+  visdrone_images: null      # optional faster copy: <root>/VisDrone2019-MOT-<split>/sequences (a missing split falls back)
+
+  # BDD100K MOT val (evaluation only): images <seq>/*.jpg and TrackEval BDD100K-format GT <seq>.json
+  bdd_mot_val_images: data/bdd100k_mot/images/track/val
+  bdd_mot_val_gt: data/trackeval_data/data/gt/bdd100k/bdd100k_val
+  # BDD100K detection images for training: train2017/*.jpg + annotations/det_train.json (scripts/prepare_data.py bdd)
+  bdd_det: data/bdd100k_det
+
+weights:
+  # COCO-pretrained Ultralytics checkpoints used as the starting point of every training run
+  yolov8n: weights/yolov8n.pt
+  yolo11n: weights/yolo11n.pt
+
+outputs:
+  derived: outputs/derived   # converted labels: frame indices, BDD-format GT, MOT17 half-split GT, BDD 35k subset
+  runs: outputs/runs         # training: <runs>/<name>/{last.pth, log.txt}
+  cache: outputs/cache       # detections: <cache>/<tag>/<dataset>/<seq>.npz
+  results: outputs/results   # tracking + TrackEval: <results>/<dataset>_trackers/..., <results>/<dataset>_eval/...
+
+third_party:
+  # TrackEval (github.com/JonathonLuiten/TrackEval, MIT), commit 12c8791b303e0a0b50f753af204249e622d0281a
+  trackeval: third_party/TrackEval

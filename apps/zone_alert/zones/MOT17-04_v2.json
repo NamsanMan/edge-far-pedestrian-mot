@@ -1,0 +1,49 @@
+{
+  "sequence": "MOT17-04-FRCNN",
+  "image_size": [1920, 1080],
+  "fps": 30,
+  "designed": "2026-10-31, from the scene geometry of the first evaluation frame (000527.jpg) only, before any model output was looked at",
+  "scene": "Static camera mounted high above a pedestrian shopping street at night; the street recedes toward the top of the image, so people near the top edge are 80-150 px tall in 1080p (about 8-12 px wide on the 416x256 detector canvas).",
+  "zones": [
+    {
+      "name": "far_walkway",
+      "kind": "far",
+      "polygon": [[330, 70], [1560, 70], [1700, 330], [240, 330]],
+      "dwell_s": 10.0,
+      "note": "Restricted area on the far end of the street (image rows 70-330, between the left shop fronts and the right kerb). This is where people are smallest: the band where a small-object detector change (S3x) should matter. Top 70 rows left out so a foot point is never on the cut image edge. Loitering after 10 s: crossing this deep, perspective-compressed stretch at walking speed takes several seconds, so only standing or milling around should exceed it.",
+      "approach": {
+        "horizon_s": 3.0,
+        "min_speed": 0.25,
+        "k": 5
+      },
+      "alarm_direction": [0, -1],
+      "min_cos": 0.5,
+      "direction_note": "Alarm when a person walks INTO the far end of the street from the camera side, i.e. crosses the near (bottom, row 330) edge moving up the image = away from the camera, within 60 degrees. People coming out of the far end or stepping in sideways from the shop fronts / the right kerb are logged as non-alarm ENTRY. Image 'up' is the walking direction along the street axis, which recedes toward the top of the image."
+    },
+    {
+      "name": "near_plaza",
+      "kind": "near",
+      "polygon": [[540, 780], [1500, 780], [1560, 1075], [480, 1075]],
+      "dwell_s": 6.0,
+      "note": "Nearer area of the central walkway just below the camera (rows 780-1075, between the left lamp-post line and the right traffic cones). People here are 300-400 px tall, so detection is easy for both models; it is the control zone. Loitering after 6 s: a walker crosses this shallow band in about 2-3 s.",
+      "noted_afterwards": "Correction added on 2026-10-31 after a review; the polygon was not changed. The polygon contains the lamp post and the traffic cones rather than lying between them, and the people in it are a median 261 px tall at their GT confirmation frames, not 300-400 px.",
+      "approach": {
+        "horizon_s": 3.0,
+        "min_speed": 0.25,
+        "k": 5
+      },
+      "alarm_edge": 0,
+      "min_cos": 0.5,
+      "direction_note": "Alarm when a person comes down the street toward the camera and crosses the far (top, row 780) edge of the area below the camera inward (edge 0 = vertex 0 -> 1, inward normal = image down), within 60 degrees. People stepping in from the left pavement or from the right (cones) side are logged as ENTRY."
+    }
+  ],
+  "designed_v2": "2026-10-31, copy of zones/MOT17-04.json (polygons, dwell limits and notes unchanged) with the motion options added. Alarm directions and the tripwire were chosen from the scene geometry of the first evaluation frame only, before any output of the new logic (model or ground truth) was looked at.",
+  "lines": [
+    {
+      "name": "mid_street",
+      "points": [[200, 620], [1480, 620]],
+      "alarm_direction": [0, 1],
+      "note": "Counting line across the whole pedestrian street at mid depth (row 620, between the far band ending at row 330 and the near area starting at row 780), from the yellow tactile strip on the left (x 200) to the kerb with the cones on the right (x 1480). LINE_CROSS when a person crosses it walking toward the camera (image down); crossing away from the camera raises nothing."
+    }
+  ]
+}

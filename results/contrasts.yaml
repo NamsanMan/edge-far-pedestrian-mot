@@ -1,0 +1,30 @@
+# Published contrasts (scripts/compare.py --table results/contrasts.yaml).
+# Each entry: dataset, detector tag, arm A, arm B (run-tag variants), classes, group, pre-registered prediction id (or null).
+# Every entry is evaluated for both trackers (ByteTrack, OC-SORT) with cross-fitted thresholds (rule "cross").
+# d = HOTA(A) - HOTA(B). Holm families: (dataset, class, tracker) over the entries of this file.
+# Variants: 416 / 640 = plain YOLO canvas width, WxH = compute-matched uniform canvas, s3x / s3y = anisotropic P3 module,
+# 416_p2 = plain 416 canvas with an extra stride-4 (P2) detection level (reference only; that model is not part of this repository).
+
+- {dataset: dsec, det: v8n, a: 416s3x, b: "416", classes: [car, pedestrian], group: s3x_vs_plain, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, b: 416s3y, classes: [car, pedestrian], group: s3x_vs_s3y, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, b: 448x352, classes: [car, pedestrian], group: s3x_vs_compute_matched, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3y, b: "416", classes: [car, pedestrian], group: s3y_vs_plain, prediction: null}
+- {dataset: dsec, det: v8n, a: "640", b: 416s3x, classes: [car, pedestrian], group: reference_640_vs_s3x, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, b: 416_p2, classes: [car, pedestrian], group: s3x_vs_p2, prediction: null}
+- {dataset: dsec, det: y11n, a: 416s3x, b: "416", classes: [car, pedestrian], group: s3x_vs_plain, prediction: null}
+
+- {dataset: mot17, det: v8n, a: 416s3x, b: "416", classes: [pedestrian], group: s3x_vs_plain, prediction: P1}
+- {dataset: mot17, det: v8n, a: 416s3x, b: 416s3y, classes: [pedestrian], group: s3x_vs_s3y, prediction: P2}
+- {dataset: mot17, det: v8n, a: 416s3x, b: 480x256, classes: [pedestrian], group: s3x_vs_compute_matched, prediction: P4}
+
+- {dataset: visdrone, det: v8n, a: 640s3x, b: "640", classes: [pedestrian], group: s3x_vs_plain, prediction: P1}
+- {dataset: visdrone, det: v8n, a: 640s3x, b: 640s3y, classes: [pedestrian], group: s3x_vs_s3y, prediction: P2}
+- {dataset: visdrone, det: v8n, a: 640s3y, b: 640s3x, classes: [car], group: s3y_vs_s3x, prediction: P3}
+- {dataset: visdrone, det: v8n, a: 640s3x, b: 704x384, classes: [pedestrian], group: s3x_vs_compute_matched, prediction: P4}
+- {dataset: visdrone, det: v8n, a: 640s3x, b: "640", classes: [car], group: s3x_vs_plain, prediction: null}
+
+- {dataset: bdd, det: v8n, a: 416s3x, b: "416", classes: [car, pedestrian], group: s3x_vs_plain, prediction: null}
+- {dataset: bdd, det: v8n, a: 416s3x, b: 480x256, classes: [car, pedestrian], group: s3x_vs_compute_matched, prediction: null}
+- {dataset: bdd, det: v8n, a: "640", b: 416s3x, classes: [car, pedestrian], group: reference_640_vs_s3x, prediction: null}
+- {dataset: bdd, det: y11n, a: 416s3x, b: "416", classes: [car, pedestrian], group: s3x_vs_plain, prediction: null}
+- {dataset: bdd, det: y11n, a: 416s3x, b: 480x256, classes: [car, pedestrian], group: s3x_vs_compute_matched, prediction: null}

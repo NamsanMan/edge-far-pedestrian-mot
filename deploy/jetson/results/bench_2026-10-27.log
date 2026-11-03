@@ -1,0 +1,23 @@
+2026-10-27 13:23:44 start; power mode: NV Power Mode: 15W
+2026-10-27 13:29:42 RESULT v8n_416_uniform_canvas.onnx fp16 GPU Compute Time: min = 2.92468 ms, max = 2.95654 ms, mean = 2.93952 ms, median = 2.93945 ms
+2026-10-27 13:36:49 RESULT v8n_416_s3x_canvas.onnx fp16 GPU Compute Time: min = 3.25 ms, max = 3.28369 ms, mean = 3.26309 ms, median = 3.26294 ms
+2026-10-27 13:44:04 RESULT v8n_416_s3y_canvas.onnx fp16 GPU Compute Time: min = 3.25195 ms, max = 3.28955 ms, mean = 3.27462 ms, median = 3.27441 ms
+2026-10-27 13:52:50 RESULT v8n_416_p2_canvas.onnx fp16 GPU Compute Time: min = 4.49023 ms, max = 4.52881 ms, mean = 4.50735 ms, median = 4.50732 ms
+2026-10-27 14:00:37 RESULT v8n_416_mxxr_canvas.onnx fp16 GPU Compute Time: min = 3.53027 ms, max = 3.57288 ms, mean = 3.54809 ms, median = 3.54797 ms
+2026-10-27 14:09:29 RESULT v8n_416_casp_canvas.onnx fp16 GPU Compute Time: min = 4.11914 ms, max = 4.15137 ms, mean = 4.13661 ms, median = 4.13672 ms
+2026-10-27 14:16:36 RESULT v8n_448x352_uniform_canvas.onnx fp16 GPU Compute Time: min = 3.09668 ms, max = 3.15381 ms, mean = 3.1274 ms, median = 3.12744 ms
+2026-10-27 14:23:58 RESULT v8n_640_uniform_canvas.onnx fp16 GPU Compute Time: min = 4.62891 ms, max = 4.77612 ms, mean = 4.72194 ms, median = 4.71973 ms
+2026-10-27 15:00:34 RESULT v8n_640_uniform_native.onnx fp16 GPU Compute Time: min = 4.65332 ms, max = 4.75684 ms, mean = 4.73404 ms, median = 4.73389 ms
+2026-10-27 15:08:17 RESULT bdd_416_uniform_canvas.onnx fp16 GPU Compute Time: min = 2.50879 ms, max = 2.53662 ms, mean = 2.5225 ms, median = 2.52246 ms
+2026-10-27 15:16:13 RESULT bdd_416_s3x_canvas.onnx fp16 GPU Compute Time: min = 2.72852 ms, max = 2.75415 ms, mean = 2.74328 ms, median = 2.74316 ms
+2026-10-27 15:39:37 RESULT bdd_640_uniform_canvas.onnx fp16 GPU Compute Time: min = 3.73242 ms, max = 3.86133 ms, mean = 3.80552 ms, median = 3.80518 ms
+2026-10-27 15:47:21 RESULT bdd_416_uniform_native.onnx fp16 GPU Compute Time: min = 2.65137 ms, max = 2.77295 ms, mean = 2.7407 ms, median = 2.74121 ms
+2026-10-27 16:10:55 RESULT bdd_640_uniform_native.onnx fp16 GPU Compute Time: min = 3.97461 ms, max = 4.20605 ms, mean = 4.17599 ms, median = 4.17578 ms
+2026-10-27 16:22:35 RESULT v8n_416_uniform_canvas.onnx int8 GPU Compute Time: min = 2.32129 ms, max = 2.35449 ms, mean = 2.33973 ms, median = 2.33984 ms
+2026-10-27 16:35:30 RESULT v8n_416_s3x_canvas.onnx int8 GPU Compute Time: min = 2.69531 ms, max = 2.72363 ms, mean = 2.71234 ms, median = 2.7124 ms
+2026-10-27 17:27:41 RESULT bdd_640_uniform_canvas.onnx int8 GPU Compute Time: min = 2.9668 ms, max = 3.02075 ms, mean = 3.00714 ms, median = 3.00708 ms
+2026-10-27 17:34:03 RESULT v8n_416_uniform_canvas.onnx fp16 GPU Compute Time: min = 2.86328 ms, max = 2.90869 ms, mean = 2.8868 ms, median = 2.88672 ms
+2026-10-27 17:41:18 RESULT v8n_416_s3x_canvas.onnx fp16 GPU Compute Time: min = 3.25732 ms, max = 3.29102 ms, mean = 3.27011 ms, median = 3.27002 ms
+2026-10-27 17:48:43 RESULT v8n_640_uniform_canvas.onnx fp16 GPU Compute Time: min = 4.63184 ms, max = 4.74463 ms, mean = 4.72299 ms, median = 4.7229 ms
+2026-10-27 18:04:03 RESULT v8n_640_uniform_native.onnx fp16 GPU Compute Time: min = 4.69629 ms, max = 4.83984 ms, mean = 4.78453 ms, median = 4.78418 ms
+2026-10-27 18:04:03 BENCH_DONE

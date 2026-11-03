@@ -1,0 +1,61 @@
+{
+ "window": {
+  "seq": "MOT17-04-FRCNN",
+  "start": 617,
+  "end": 826,
+  "far_entries": 10,
+  "n_candidates": 13,
+  "score_distribution": [
+   0,
+   0,
+   0,
+   0,
+   1,
+   0,
+   1,
+   5,
+   5,
+   0,
+   1
+  ]
+ },
+ "window_s": [
+  3.0,
+  10.0
+ ],
+ "image_frames": [
+  617,
+  826
+ ],
+ "out_frames": 70,
+ "out_fps": 10.0,
+ "size_wh": [
+  1280,
+  568
+ ],
+ "gif_bytes": 5261607,
+ "mp4_bytes": 2323858,
+ "mp4_codec": "h264 (avc1)",
+ "alerted_in_window": {
+  "plain": {
+   "far": [
+    7,
+    10
+   ],
+   "near": [
+    3,
+    3
+   ]
+  },
+  "s3x": {
+   "far": [
+    4,
+    10
+   ],
+   "near": [
+    3,
+    3
+   ]
+  }
+ }
+}

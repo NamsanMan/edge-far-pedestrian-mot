@@ -1,0 +1,48 @@
+{
+  "sequence": "MOT17-09-FRCNN",
+  "image_size": [1920, 1080],
+  "fps": 30,
+  "designed": "2026-10-31, from the scene geometry of the first evaluation frame (000264.jpg) only, before any model output was looked at",
+  "scene": "Static camera at about chest height in front of shop entrances; the pavement recedes to the right, so the deepest visible floor is the right edge (Woolworths entrance), where people are about 200-280 px tall in 1080p.",
+  "zones": [
+    {
+      "name": "far_storefront",
+      "kind": "far",
+      "polygon": [[1380, 590], [1920, 560], [1920, 720], [1350, 735]],
+      "dwell_s": 5.0,
+      "note": "Restricted area on the deepest visible floor, in front of the far shop entrance at the right edge (rows 560-735). People are smallest here in this sequence (but larger than the far zone of MOT17-04). Loitering after 5 s: walkers pass this short strip in about 2 s.",
+      "approach": {
+        "horizon_s": 3.0,
+        "min_speed": 0.25,
+        "k": 5
+      },
+      "alarm_edge": 2,
+      "min_cos": 0.5,
+      "direction_note": "Alarm when a person turns off the open pavement toward the far shop entrance, i.e. crosses the front (bottom, edge 2 = vertex 2 -> 3, rows 720-735) edge inward = moving up the image, within 60 degrees. Walking along the pavement past the shops (mostly sideways in the image) into or through the strip is logged as ENTRY."
+    },
+    {
+      "name": "near_entrance",
+      "kind": "near",
+      "polygon": [[150, 770], [1050, 700], [1150, 900], [100, 960]],
+      "dwell_s": 4.0,
+      "note": "Floor directly in front of the near shop entrance (left half, rows 700-960), where passers-by are 500-700 px tall: the easy control zone. Loitering after 4 s (the evaluation half is only 8.7 s long, so longer dwell limits could never fire); passing the entrance takes about 2 s.",
+      "approach": {
+        "horizon_s": 3.0,
+        "min_speed": 0.25,
+        "k": 5
+      },
+      "alarm_edge": 2,
+      "min_cos": 0.5,
+      "direction_note": "Alarm when a person walks from the open pavement straight toward the near shop door, i.e. crosses the front (bottom, edge 2 = vertex 2 -> 3, rows 900-960) edge inward = moving up the image (away from the camera), within 60 degrees. Passers-by entering the strip from the left or the right side are logged as ENTRY."
+    }
+  ],
+  "designed_v2": "2026-10-31, copy of zones/MOT17-09.json (polygons, dwell limits and notes unchanged) with the motion options added. Alarm directions and the tripwire were chosen from the scene geometry of the first evaluation frame only, before any output of the new logic (model or ground truth) was looked at.",
+  "lines": [
+    {
+      "name": "pavement",
+      "points": [[1250, 745], [1250, 1075]],
+      "alarm_direction": [1, 0],
+      "note": "Counting line across the pavement between the near and the far shop entrance (column 1250, from the shop-front floor line at row 745 to the bottom edge). LINE_CROSS when a person crosses it walking right, i.e. deeper along the pavement toward the far entrance; crossing toward the camera side (left) raises nothing."
+    }
+  ]
+}

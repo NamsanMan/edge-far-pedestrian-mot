@@ -1,0 +1,45 @@
+# local configuration (copy of configs/paths.example.yaml with your own paths)
+/configs/paths.yaml
+
+# datasets, pretrained weights, third-party clones (see docs/DATA.md)
+/data/
+/weights/
+/third_party/
+
+# everything the code writes (configs/paths.example.yaml: outputs.*)
+/outputs/
+
+# model files: released through GitHub Releases, never committed (the model card and checksums are versioned)
+release_assets/*
+!release_assets/MODEL_CARD.md
+!release_assets/SHA256SUMS.txt
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.engine
+*.trt
+
+# zone-alert app: generated caches and renders
+apps/zone_alert/cache/
+apps/zone_alert/out/
+
+# Jetson export folder (ONNX files are rebuilt by deploy/jetson/export_onnx.py)
+deploy/jetson/export/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

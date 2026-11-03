@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "efpmot"
+version = "0.1.0"
+description = "Edge multi-object tracking of far, small pedestrians: an anisotropic-stride P3 level (S3x) for YOLOv8n / YOLO11n"
+readme = "README.md"
+requires-python = ">=3.10,<3.14"
+license = "AGPL-3.0-only"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
+authors = [{ name = "In Ho Jeung" }]
+keywords = ["multi-object tracking", "small object detection", "edge AI", "YOLO", "pedestrian"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Image Recognition",
+]
+# Install PyTorch with CUDA from https://pytorch.org before `pip install -e .` (PyPI wheels on Windows are CPU-only).
+# Tested with: Python 3.10, torch 2.8.0 (CUDA 12.9), torchvision 0.23.0, ultralytics 8.3.170, boxmot 25.0.0,
+# numpy 2.2.6, scipy 1.15.3, opencv-python 4.11.0.86, PyYAML 6.0.3, Pillow 12.3.0.
+# ultralytics and boxmot are pinned: the S3x model edits fixed layer indices of the 8.3.170 model YAMLs and its loss
+# re-implements the 8.3.170 v8DetectionLoss call; the tracker settings were measured with boxmot 25.0.0, which needs
+# numpy >= 2.2 and Python < 3.14.
+dependencies = [
+    "torch>=2.1",
+    "torchvision>=0.16",
+    "ultralytics==8.3.170",
+    "boxmot==25.0.0",
+    "numpy>=2.2",
+    "scipy>=1.10",
+    "opencv-python>=4.8",
+    "PyYAML>=6.0",
+    "Pillow>=10.0",
+]
+
+[project.optional-dependencies]
+deploy = ["onnx>=1.15", "onnxruntime>=1.17"]   # deploy/jetson: ONNX export and the CPU check of the exported graph
+dev = ["ultralytics-thop>=2.0"]   # the `thop` module of efpmot.models.flops and its test (ultralytics already pulls it in)
+
+[tool.setuptools.packages.find]
+include = ["efpmot*"]
+
+[tool.setuptools.package-data]
+efpmot = ["data/splits/*.json", "data/splits/*.txt"]
