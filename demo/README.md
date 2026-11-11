@@ -27,6 +27,7 @@ BDD100K at about twice the FLOPs.
 | [`dsec_compare_2.gif`](dsec_compare_2.gif) / [`.mp4`](dsec_compare_2.mp4) | DSEC, same scene, full frame + 2x zoom, 7 s | CC BY-SA 4.0 |
 | [`mot17_clear_1.gif`](mot17_clear_1.gif) / [`.mp4`](mot17_clear_1.mp4) | MOT17-10, one far pedestrian, moving camera, 3 s | CC BY-NC-SA 3.0 |
 | [`grid_explainer.png`](grid_explainer.png) / [`.gif`](grid_explainer.gif) | why: P3 anchor centres on a narrow pedestrian | CC BY-NC-SA 3.0 |
+| [`explainer.gif`](explainer.gif) | schematic explainer at the top of the main README (synthetic scene, not real data), 18 s | repository licence |
 
 ## How the clips were chosen
 
@@ -157,3 +158,5 @@ under CC BY-NC-SA 3.0, non-commercial use only.*
   shared under CC BY-NC-SA 3.0: non-commercial use, with attribution, share alike. The attribution is also drawn on
   every frame.
 - The zone-alert app media are in [`apps/zone_alert/demo/`](../apps/zone_alert/demo/) (MOT17, CC BY-NC-SA 3.0).
+- **Schematic explainer** (`explainer.gif`): an original illustration rendered from a synthetic 3D scene. It contains
+  no dataset frames, labels or model outputs and is covered by the repository licence.

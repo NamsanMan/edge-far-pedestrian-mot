@@ -1,5 +1,11 @@
 # Edge tracking of far, small pedestrians
 
+![Schematic explainer: edge cameras, a 4 px pedestrian slipping between the P3 grid points, and the S3x grid catching it](demo/explainer.gif)
+
+*Schematic explainer, rendered from a synthetic scene (an illustration, not real data). On a 416 x 256 edge input a
+far pedestrian is about 4 px wide and can fall between the 8 px P3 grid points; S3x halves the horizontal spacing.
+Real clips and measured results follow below.*
+
 Multi-object tracking of far, small pedestrians with the small input canvases that edge detectors use. A far
 pedestrian is missed when its **short side**, its width, falls below about one P3 stride (8 px). **S3x** gives the P3
 stage of YOLOv8n / YOLO11n a horizontal grid twice as fine (stride 8 vertically, 4 horizontally) for about +11 % FLOPs.
