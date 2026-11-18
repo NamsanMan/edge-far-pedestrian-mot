@@ -7,32 +7,40 @@ originals) and 416 x 256 for 16:9 street and driving video (e.g. 1280 x 720 BDD1
 pedestrian is then only a few pixels wide on the canvas. YOLOv8n's finest output level, P3, has one anchor point every
 8 px in both directions.
 
-**Pedestrians are width-limited, cars are height-limited.** In the measurements below, detection follows the object's
-*short side* on the canvas, not its area:
+### The shorter side decides
+
+Whether a far object is detected depends on its shorter side on the canvas, not on its area. For a pedestrian the
+shorter side is the width; for a car it is the height:
 
 - A pedestrian is about 2-3 times taller than wide, so its short side is its width.
 - A car seen from the road or from a drone is wider than tall, so its short side is its height.
 
-**Evidence from uniform-canvas detectors (DSEC val, held out, YOLOv8n at 416 x 320, 3 seeds pooled).** A logistic
-regression of "detected" (a same-class box with IoU >= 0.5 and score >= 0.5) on log canvas width and log canvas height
-of each visible ground-truth object (no other labelled box covers more than 10 % of it, fully inside the frame;
-standard errors clustered by GT track):
+### Evidence from plain YOLOv8n
+
+We fitted a logistic regression on the DSEC validation set, which none of the models was trained on (plain YOLOv8n at
+416 x 320, 3 seeds pooled). The outcome is whether a ground-truth object is detected, that is, covered by a box of the
+same class with IoU >= 0.5 and score >= 0.5. The inputs are the logarithms of the object's width and height on the
+canvas. Only clearly visible objects are used: fully inside the frame and covered less than 10 % by any other labelled
+box. Standard errors are clustered by ground-truth track.
 
 | class | objects x seeds | coefficient of log width (SE) | coefficient of log height (SE) |
 |---|---|---|---|
 | pedestrian | 11,661 | +2.57 (0.48) | +0.15 (0.54) |
 | car | 37,626 | +0.03 (0.29) | +2.87 (0.33) |
 
-- For pedestrians, height adds nothing once width is in the model. Cars are the mirror case.
-- In paired comparisons, where the same objects are seen by two detectors with different canvas geometry, a log-unit
-  of width moves the pedestrian hit rate 6 to 8 times as much as a log-unit of height.
-- These two analyses need DSEC val detection caches and were computed with analysis code that is not part of this
-  repository; the numbers are reported as text. The ground-truth table below is reproducible from the repository.
+- For pedestrians, height adds nothing once width is in the model. For cars it is the other way round: width adds
+  nothing once height is in the model.
+- A second analysis compared the same objects across detectors whose canvases differ in width and height. Making a
+  pedestrian wider on the canvas raised its detection rate 6 to 8 times as much as making it taller by the same factor.
+- Both analyses need the DSEC validation detections and use analysis code that is not part of this repository, so
+  their numbers are given here as text only. The ground-truth table below is reproducible from the repository.
 
-**Ground-truth geometry: how many objects fall below one stride.** These are the measurements fixed before any
-VisDrone or MOT17 training ([`PREREGISTRATION.md`](PREREGISTRATION.md)). Frames letterboxed to a long side of 416 /
-640 px. Reproduce with `python -B scripts/short_side_stats.py` (ground truth only, CPU, about 15 s; it prints these
-numbers and the shares quoted below the table).
+### Ground-truth geometry: how many objects fall below one stride
+
+These counts were recorded before any training on VisDrone or MOT17 ([`PREREGISTRATION.md`](PREREGISTRATION.md)),
+with each frame letterboxed to a long side of 416 or 640 px. Reproduce them with
+`python -B scripts/short_side_stats.py` (ground truth only, CPU, about 15 s; it prints these numbers and the shares
+quoted below the table).
 
 | data | class | boxes | median w / h | width is the short side | short side < 8 px at 416 / 640 |
 |---|---|---|---|---|---|
@@ -41,12 +49,14 @@ numbers and the shares quoted below the table).
 | VisDrone2019-MOT train+val | car | 537,122 | 1.26 | 26 % | 37 % / 12 % |
 | MOT17 train (FRCNN, visibility >= 0.25) | pedestrian | 85,828 | 0.35 | 100 % | 18 % / 8 % |
 
-At 640, 97 % of the VisDrone pedestrians below 8 px are narrow on their width; 86 % of the small cars are short on their
-height.
+At 640 px, the shorter side is the width for 97 % of the VisDrone pedestrians below 8 px, and the height for 86 % of the
+small cars.
 
-**Why the assigner makes this sharp.** YOLOv8's task-aligned assigner (TAL) only considers anchors whose centre lies
-inside a ground-truth box. A box narrower than the 8 px anchor spacing can fall between two anchor columns. It then gets
-no positive anchor at P3 (and none at P4 / P5), so it is trained as background.
+### Why the cut-off is so sharp
+
+YOLOv8's task-aligned assigner (TAL) only considers anchors whose centre lies inside a ground-truth box. A box narrower
+than the 8 px anchor spacing can fall between two anchor columns. It then gets no positive anchor at P3 (and none at
+P4 / P5), so it is trained as background.
 
 ![P3 anchor centres on a 4.3 px wide pedestrian](../demo/grid_explainer.png)
 
@@ -89,8 +99,8 @@ new operator. The P3 level keeps its full depth, and P4 / P5 are unchanged.
 
   The thinned box branch starts from the leading channels of the COCO P3 box branch. The class branches start fresh at
   every level, as in the plain model (COCO has 80 classes, these models have 8).
-- **S3y** is the transposed module (stride 4 vertically, 8 horizontally), at the same cost. It is the control: if the
-  short-side rule is right, S3y should help cars, which are height-limited, and not pedestrians.
+- **S3y** swaps the two axes (stride 4 vertically, 8 horizontally) at the same cost. It is the control: if the
+  short-side rule is right, S3y should help cars, whose shorter side is the height, and not pedestrians.
 
 ### Per-axis anchors, decoding and loss
 
@@ -98,8 +108,8 @@ new operator. The P3 level keeps its full depth, and P4 / P5 are unchanged.
   (sx = W_in / W_level, sy = H_in / H_level). Anchor points are generated per axis, at cell centres
   ((i + 0.5) sx, (j + 0.5) sy).
 - **Decoding.** The DFL distances (left, top, right, bottom) are predicted in per-axis grid units and scaled by
-  (sx, sy, sx, sy). At P3 of S3x, one horizontal unit is 4 px and one vertical unit is 8 px. The classification prior
-  bias uses sqrt(sx * sy).
+  (sx, sy, sx, sy). At P3 of S3x, one horizontal unit is 4 px and one vertical unit is 8 px. The initial bias of the
+  classification branch, which Ultralytics derives from the stride, uses sqrt(sx * sy).
 - **Loss.** `AnisoV8Loss` is the Ultralytics 8.3.170 `v8DetectionLoss` with the stride tensors made per-axis:
   - The task-aligned assigner works on pixel boxes and pixel anchor points, so a narrow box now covers anchor centres
     of the 4 px columns.
@@ -124,11 +134,12 @@ Code: `efpmot/models/aniso.py` (YOLOv8n, `AUpsample`, `AnisoDetect`, `AnisoV8Los
 
 ## 3. Training and evaluation in brief
 
-- **Training.** Every arm is trained from the COCO checkpoint with one shared harness:
+- **Training.** Every model is trained from the COCO checkpoint with the same training code and settings:
   - batch 16, AdamW, lr 0.000833, weight decay 5e-4;
   - linear warm-up, then a cosine decay to 0.05 x lr;
   - FP16;
-  - per frame pair: a horizontal flip, a 0.8-1.2 resize and one brightness gain, then the letterbox. The letterbox
+  - each training item is a frame with its previous frame (only the current frame enters the loss), and both get the
+    same augmentation: a horizontal flip, a 0.8-1.2 resize and one brightness gain, then the letterbox. The letterbox
     rescales the frame to the canvas, so the resize hardly changes object sizes on the canvas: in effect there is no
     scale augmentation;
   - 6 epochs on DSEC, VisDrone and BDD100K; 55 epochs on MOT17, whose training set is about 9 times smaller.
@@ -137,9 +148,9 @@ Code: `efpmot/models/aniso.py` (YOLOv8n, `AUpsample`, `AnisoDetect`, `AnisoV8Los
   is chosen per sequence.
 - **Threshold choice.** The threshold of each held-out sequence is chosen by leave-one-sequence-out cross-fitting on the
   other sequences (10 video folds on BDD100K), so no sequence chooses its own threshold.
-- **Comparison.** HOTA is recombined exactly from per-sequence TrackEval statistics and compared with a paired
-  hierarchical bootstrap (sequences, then seeds), a paired randomisation test and TOST equivalence against frozen
-  margins.
+- **Comparison.** HOTA is recomputed exactly from the per-sequence TrackEval statistics. Two models are compared with
+  a paired hierarchical bootstrap that resamples sequences and then seeds (confidence intervals), a paired
+  randomisation test (p-values) and TOST, an equivalence test against margins fixed in advance.
 
 Details: [`PROTOCOL.md`](PROTOCOL.md). Results: [`results/RESULTS.md`](../results/RESULTS.md).
 
@@ -151,7 +162,7 @@ project adds:
 
 - the measured short-side regularity that says *which* axis to refine for *which* class (S3y is the falsification test);
 - a placement of the refinement at P3 at a fixed +11 % budget;
-- the comparison, under one tracking protocol, against compute-matched uniform canvases, a P2 level and a shallow
-  MatrixNets-style branch, with the latency of each measured on a Jetson Orin Nano.
+- the comparison, under one tracking protocol, against plain models on larger inputs of the same FLOPs, a P2 level
+  and a shallow MatrixNets-style branch, with the latency of each measured on a Jetson Orin Nano.
 
 The alternatives that were tried and dropped are in [`EXPERIMENTS_LOG.md`](EXPERIMENTS_LOG.md).
