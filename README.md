@@ -193,8 +193,10 @@ ground-truth box is drawn on the DSEC clips. The Thermal Watch scenes were picke
 
 [![Thermal Watch demo video](apps/thermal_watch/media/thermal_watch_demo.jpg)](https://youtu.be/e3jIqR9ppsA)
 
-*Demo video (43 s, YouTube): the live screen on two HIT-UAV night flights (70 m and 130 m altitude), then the review
-screen. Neither recording was used for training. Footage: HIT-UAV (Suo et al., Scientific Data 2023), CC BY 4.0.*
+**[Watch the demo video on YouTube (43 s)](https://youtu.be/e3jIqR9ppsA)**
+
+*The live screen on two HIT-UAV night flights (70 m and 130 m altitude), then the review screen. Neither recording was
+used for training. Footage: HIT-UAV (Suo et al., Scientific Data 2023), CC BY 4.0.*
 
 [`apps/thermal_watch`](apps/thermal_watch/README.md) runs S3x on thermal (LWIR, 640 x 512) drone video. It tracks
 people after subtracting the drone's own motion, raises an alert with a snapshot and an estimated distance when it

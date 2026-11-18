@@ -2,8 +2,10 @@
 
 [![Thermal Watch demo video](media/thermal_watch_demo.jpg)](https://youtu.be/e3jIqR9ppsA)
 
-*Demo video (43 s, YouTube): the live screen on two HIT-UAV night flights (70 m and 130 m altitude), then the review
-screen. Neither recording was used for training. The two scenes were picked by hand; the 120 m sample video, where
+**[Watch the demo video on YouTube (43 s)](https://youtu.be/e3jIqR9ppsA)**
+
+*The live screen on two HIT-UAV night flights (70 m and 130 m altitude), then the review screen. Neither recording was
+used for training. The two scenes were picked by hand; the 120 m sample video, where
 the model failed, is left out (see [Limits](#limits)). Footage: HIT-UAV (Suo et al., Scientific Data 2023), CC BY 4.0.*
 
 Thermal Watch runs S3x (YOLOv8n with a horizontally finer P3 grid, see the [main README](../../README.md)) on a drone's

@@ -87,7 +87,9 @@ TensorRT 10.3, FP16, 배치 1, 15 W 모드에서 검출기 엔진만 잰 GPU 연
 
 [![Thermal Watch 데모 영상](apps/thermal_watch/media/thermal_watch_demo.jpg)](https://youtu.be/e3jIqR9ppsA)
 
-*데모 영상(43초, YouTube): HIT-UAV 야간 비행 두 개(고도 70 m, 130 m)에서 돌린 실시간 화면과 검토 화면이다. 데모 영상의 두 녹화 영상 모두 학습에 쓰지 않았고, 영상에 나오는 두 장면은 예시를 보여 주기 위해 직접 골랐다. 영상: HIT-UAV (Suo et al., Scientific Data 2023), CC BY 4.0.*
+**[YouTube에서 데모 영상 보기 (43초)](https://youtu.be/e3jIqR9ppsA)**
+
+*HIT-UAV 야간 비행 두 개(고도 70 m, 130 m)에서 돌린 실시간 화면과 검토 화면이다. 데모 영상의 두 녹화 영상 모두 학습에 쓰지 않았고, 영상에 나오는 두 장면은 예시를 보여 주기 위해 직접 골랐다. 영상: HIT-UAV (Suo et al., Scientific Data 2023), CC BY 4.0.*
 
 [`apps/thermal_watch`](apps/thermal_watch/README.md)는 드론 열화상(LWIR, 640 x 512) 영상에 S3x를 돌려 사람을 찾는다. 드론 움직임을 보정한 좌표에서 사람을 추적하고, 새 사람을 확인하면 확대 조각과 추정 거리를 붙여 경보를 내며(6초 넘게 놓쳤던 사람은 경보가 한 번 더 난다), 모든 경보를 검토 화면의 재생 바에 남긴다. HIT-UAV에는 추적 ID가 없어 추적 성능은 평가할 수 없으므로, 검출 성능만 학습에 쓰지 않은 녹화 영상으로 평가했다(사람 AP50, 416 x 320 입력).
 
