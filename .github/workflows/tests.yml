@@ -1,5 +1,5 @@
 # Dataset-free tests on CPU: models, data readers on synthetic files, training loop, tracking, protocol, tables from
-# results/stats, release table and the zone-alert logic. Tests that need datasets or weights skip themselves.
+# results/stats, release table and the Thermal Watch app logic. Tests that need datasets or weights skip themselves.
 name: tests
 
 on:
@@ -23,9 +23,11 @@ jobs:
         run: pip install -e .[dev]
       - name: Unit tests
         run: python -B -m unittest discover -s tests -v
-      - name: Zone-alert tests
-        run: python -B apps/zone_alert/tests/test_zone_monitor.py
+      - name: Thermal Watch tests
+        run: python -B apps/thermal_watch/tests/test_thermal_watch.py
       - name: Tables are reproducible from results/stats
         run: |
           python -B scripts/compare.py --table results/contrasts.yaml
-          git diff --exit-code -- results/RESULTS.md results/summary.csv
+          python -B scripts/compare.py --detectors results/contrasts_detectors.yaml
+          python -B scripts/evaluate_hituav.py --table
+          git diff --exit-code -- results/RESULTS.md results/summary.csv results/DETECTORS.md results/summary_detectors.csv results/HITUAV.md

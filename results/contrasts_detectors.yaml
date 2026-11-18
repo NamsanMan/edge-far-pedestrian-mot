@@ -1,0 +1,23 @@
+# DSEC detector comparison (scripts/compare.py --detectors results/contrasts_detectors.yaml -> results/DETECTORS.md).
+# Each entry: dataset, detector of arm A (det), arm A, detector of arm B (det_b), arm B (run-tag variants), classes, group,
+# prediction. Arm A is always YOLOv8n + S3x on the 416 x 320 canvas; d = HOTA(A) - HOTA(B). Every entry is evaluated for
+# both trackers with cross-fitted thresholds (rule "cross"), as in contrasts.yaml.
+# Holm families: (dataset, class, tracker) over the entries of THIS file, separate from those of contrasts.yaml.
+# Detectors: v8n YOLOv8n, y11n YOLO11n, y26n YOLO26n, nano YOLOX-Nano, tiny YOLOX-Tiny, nd NanoDet-Plus-m, v8s YOLOv8s,
+# rtd RT-DETR-L. Variants as in contrasts.yaml: 416 / 640 = plain canvas width, 448x352 = uniform canvas, 416_p2 = P2 level.
+# Only the YOLOv8n and YOLO11n models (not 416_p2) are part of this repository; the other arms are results only.
+# Stats of the arms that contrasts.yaml does not use (scripts/extract_stats.py --dataset dsec --classes car pedestrian):
+# dsec_y26n_416_s0..s1, dsec_{nano,tiny,nd,v8s,rtd}_416_s0..s2.
+# Order: arm B by GFLOPs.
+
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: nano, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: nd, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: y26n, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: y11n, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: v8n, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: v8n, b: 448x352, classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: v8n, b: 416_p2, classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: tiny, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: v8n, b: "640", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: v8s, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}
+- {dataset: dsec, det: v8n, a: 416s3x, det_b: rtd, b: "416", classes: [car, pedestrian], group: s3x_vs_detector, prediction: null}

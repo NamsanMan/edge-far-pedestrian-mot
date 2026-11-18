@@ -8,6 +8,10 @@ detection caches, tracker outputs and results/stats, and to the settings needed 
 
     from efpmot.models import build
     ad = build("yolov8n_s3x", 8, "release_assets/yolov8n_s3x_dsec_416x320_s0.pt")
+
+HIT-UAV files (dataset 'hituav-<fold>': trained on the train part of that recording-disjoint fold, efpmot/data/hituav.py) also
+carry thr = the person score threshold with the best F1 on the fold's val part (the operating point of
+results/hituav/<run>.json, op.pedestrian.thr; results/HITUAV.md).
 """
 from __future__ import annotations
 
@@ -26,8 +30,27 @@ RELEASES = {
                                               seed=0, epochs=55),
     "yolov8n_s3x_mot17_416x256_s0.pt": dict(run="mot_v8n_416s3x_s0", family="yolov8n_s3x", dataset="mot17", hw=(256, 416),
                                             seed=0, epochs=55),
+    "yolov8n_plain_hituav-recA_416x320_s0.pt": dict(run="hit_v8n_416recA_s0", family="yolov8n", dataset="hituav-recA",
+                                                    hw=(320, 416), seed=0, epochs=116, thr=0.43017578125),
+    "yolov8n_s3x_hituav-recA_416x320_s0.pt": dict(run="hit_v8n_416s3xrecA_s0", family="yolov8n_s3x", dataset="hituav-recA",
+                                                  hw=(320, 416), seed=0, epochs=116, thr=0.154052734375),
+    "yolov8n_plain_hituav-recB_416x320_s0.pt": dict(run="hit_v8n_416recB_s0", family="yolov8n", dataset="hituav-recB",
+                                                    hw=(320, 416), seed=0, epochs=118, thr=0.056640625),
+    "yolov8n_s3x_hituav-recB_416x320_s0.pt": dict(run="hit_v8n_416s3xrecB_s0", family="yolov8n_s3x", dataset="hituav-recB",
+                                                  hw=(320, 416), seed=0, epochs=118, thr=0.3056640625),
 }
 RUN_TO_FILE = {v["run"]: k for k, v in RELEASES.items()}
+
+
+def dataset_of_run(run: str) -> str:
+    """dataset name of a run tag in release file names: the dataset key (efpmot.dataset_of_tag), or for HIT-UAV runs 'hituav'
+    (official split) / 'hituav-<fold>' (the tag's fold marker, e.g. hit_v8n_416s3xrecA_s0 -> 'hituav-recA')"""
+    if run.startswith("hit_"):
+        from .data.hituav import split_of_tag
+        s = split_of_tag(run)
+        return "hituav" if s == "official" else f"hituav-{s}"
+    from . import dataset_of_tag
+    return dataset_of_tag(run)
 
 
 def release_meta(path: str) -> dict | None:

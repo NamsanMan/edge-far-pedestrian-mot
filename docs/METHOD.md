@@ -2,7 +2,8 @@
 
 ## 1. The finding: a far object is missed when its short side falls below about one P3 stride
 
-On an edge detector the input canvas is small (416 x 320 for DSEC, 416 x 256 for 16:9 street and driving video). A far
+To fit a small edge compute budget, we downscale the frames to a small input canvas: 416 x 320 for DSEC (640 x 480
+originals) and 416 x 256 for 16:9 street and driving video (e.g. 1280 x 720 BDD100K frames). A far
 pedestrian is then only a few pixels wide on the canvas. YOLOv8n's finest output level, P3, has one anchor point every
 8 px in both directions.
 
@@ -30,8 +31,8 @@ standard errors clustered by GT track):
 
 **Ground-truth geometry: how many objects fall below one stride.** These are the measurements fixed before any
 VisDrone or MOT17 training ([`PREREGISTRATION.md`](PREREGISTRATION.md)). Frames letterboxed to a long side of 416 /
-640 px. Reproduce with `python -B scripts/short_side_stats.py` (ground truth only, CPU, about 15 s; it prints this
-table exactly).
+640 px. Reproduce with `python -B scripts/short_side_stats.py` (ground truth only, CPU, about 15 s; it prints these
+numbers and the shares quoted below the table).
 
 | data | class | boxes | median w / h | width is the short side | short side < 8 px at 416 / 640 |
 |---|---|---|---|---|---|
@@ -131,8 +132,9 @@ Code: `efpmot/models/aniso.py` (YOLOv8n, `AUpsample`, `AnisoDetect`, `AnisoV8Los
     rescales the frame to the canvas, so the resize hardly changes object sizes on the canvas: in effect there is no
     scale augmentation;
   - 6 epochs on DSEC, VisDrone and BDD100K; 55 epochs on MOT17, whose training set is about 9 times smaller.
-- **Same tracker for every detector.** ByteTrack and OC-SORT (BoxMOT 25.0) with fixed settings: buffer 15 frames,
-  match 0.8, one tracker per class. Only the detection threshold is chosen per sequence.
+- **Same tracker for every detector.** ByteTrack (buffer 15 frames, match threshold 0.8) and OC-SORT (max age 15,
+  IoU threshold 0.3), both from BoxMOT 25.0 with fixed settings and one tracker per class. Only the detection threshold
+  is chosen per sequence.
 - **Threshold choice.** The threshold of each held-out sequence is chosen by leave-one-sequence-out cross-fitting on the
   other sequences (10 video folds on BDD100K), so no sequence chooses its own threshold.
 - **Comparison.** HOTA is recombined exactly from per-sequence TrackEval statistics and compared with a paired

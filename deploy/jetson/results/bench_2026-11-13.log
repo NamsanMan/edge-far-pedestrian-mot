@@ -1,0 +1,13 @@
+2026-11-13 14:29:30 start; power mode: NV Power Mode: 15W
+2026-11-13 14:35:24 RESULT v8n_416_uniform_canvas.onnx fp16 GPU Compute Time: min = 2.93066 ms, max = 2.95801 ms, mean = 2.94418 ms, median = 2.94434 ms
+2026-11-13 14:42:31 RESULT v8n_416_s3x_canvas.onnx fp16 GPU Compute Time: min = 3.25391 ms, max = 3.29199 ms, mean = 3.26976 ms, median = 3.27002 ms
+2026-11-13 14:50:44 RESULT v8s_416_canvas.onnx fp16 GPU Compute Time: min = 4.77319 ms, max = 4.8291 ms, mean = 4.79015 ms, median = 4.79004 ms
+2026-11-13 14:58:20 RESULT y11n_416_canvas.onnx fp16 GPU Compute Time: min = 3.47974 ms, max = 3.51807 ms, mean = 3.49327 ms, median = 3.49316 ms
+2026-11-13 15:05:55 RESULT y26n_416_canvas.onnx fp16 GPU Compute Time: min = 3.62695 ms, max = 3.66162 ms, mean = 3.64458 ms, median = 3.64453 ms
+2026-11-13 15:14:05 RESULT yoloxn_416_canvas.onnx fp16 GPU Compute Time: min = 3.08594 ms, max = 3.13672 ms, mean = 3.12027 ms, median = 3.12012 ms
+2026-11-13 15:21:13 RESULT yoloxt_416_canvas.onnx fp16 GPU Compute Time: min = 3.87793 ms, max = 3.9209 ms, mean = 3.90022 ms, median = 3.90015 ms
+2026-11-13 15:26:48 RESULT nanodet_416_canvas.onnx fp16 GPU Compute Time: min = 4.65332 ms, max = 4.70447 ms, mean = 4.68939 ms, median = 4.68945 ms
+2026-11-13 15:44:52 RESULT rtdetrl_416_canvas.onnx fp16 GPU Compute Time: min = 26.0176 ms, max = 26.8184 ms, mean = 26.6979 ms, median = 26.696 ms
+2026-11-13 15:51:13 RESULT v8n_416_uniform_canvas.onnx fp16 GPU Compute Time: min = 2.91602 ms, max = 2.97266 ms, mean = 2.93279 ms, median = 2.93262 ms
+2026-11-13 15:58:28 RESULT v8n_416_s3x_canvas.onnx fp16 GPU Compute Time: min = 3.27637 ms, max = 3.31921 ms, mean = 3.29483 ms, median = 3.29492 ms
+2026-11-13 15:58:28 BENCH_DONE

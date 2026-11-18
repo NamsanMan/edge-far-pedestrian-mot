@@ -5,7 +5,7 @@ title: "edge-far-pedestrian-mot: anisotropic P3 grids for tracking far, small pe
 authors:
   - family-names: Jeung
     given-names: In Ho
-version: 0.1.0
+version: 0.2.0
 license: AGPL-3.0-only
 keywords:
   - multi-object tracking

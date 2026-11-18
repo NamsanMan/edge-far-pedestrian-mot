@@ -6,7 +6,7 @@ Subpackages: models (S3x / S3y YOLOv8n and YOLO11n), data (DSEC-Det, MOT17, VisD
 loop + detection export), track (ByteTrack / OC-SORT on cached detections), eval (TrackEval + the cross-fitted paired
 comparison protocol). Paths: efpmot.paths (configs/paths.yaml).
 """
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # dataset key -> run-tag prefix (run tags: <prefix>_<det>_<variant>_s<seed>, e.g. dsec_v8n_416s3x_s0, mot_v8n_416s3x_s0)
 TAG_PREFIX = {"dsec": "dsec", "mot17": "mot", "visdrone": "vis", "bdd": "bdd"}

@@ -5,9 +5,10 @@
     python -B scripts/package_weights.py [--out release_assets] [--runs_dir DIR] [--runs TAG ...]
 
 Release file <out>/<family>_<dataset>_<W>x<H>_s<seed>.pt (plain families get '_plain', e.g.
-yolov8n_plain_dsec_416x320_s0.pt) = torch.save(state_dict) with every floating tensor in fp32; it loads with
-torch.load(weights_only=True) and efpmot.models.build(family, 8, path). Default runs: the four published release files
-(efpmot.release.RELEASES); --runs_dir defaults to outputs.runs. Each file is checked to load strictly into the efpmot model.
+yolov8n_plain_dsec_416x320_s0.pt; HIT-UAV fold runs name the fold, e.g. yolov8n_s3x_hituav-recA_416x320_s0.pt) =
+torch.save(state_dict) with every floating tensor in fp32; it loads with torch.load(weights_only=True) and
+efpmot.models.build(family, 8, path). Default runs: the published release files (efpmot.release.RELEASES); --runs_dir defaults
+to outputs.runs. Each file is checked to load strictly into the efpmot model. SHA256SUMS.txt lists every .pt file of <out>.
 """
 import argparse
 import hashlib
@@ -18,9 +19,9 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import torch  # noqa: E402
 
-from efpmot import dataset_of_tag, paths  # noqa: E402
+from efpmot import paths  # noqa: E402
 from efpmot.models import build  # noqa: E402
-from efpmot.release import RELEASES, RUN_TO_FILE  # noqa: E402
+from efpmot.release import RELEASES, RUN_TO_FILE, dataset_of_run  # noqa: E402
 
 
 def sha256(path: str) -> str:
@@ -35,7 +36,7 @@ def release_name(tag: str, family: str, hw, seed: int) -> str:
     if tag in RUN_TO_FILE:
         return RUN_TO_FILE[tag]
     fam = family if "_s3" in family else family + "_plain"
-    return f"{fam}_{dataset_of_tag(tag)}_{int(hw[1])}x{int(hw[0])}_s{int(seed)}.pt"
+    return f"{fam}_{dataset_of_run(tag)}_{int(hw[1])}x{int(hw[0])}_s{int(seed)}.pt"
 
 
 def strip(src: str, tag: str, out_dir: str) -> tuple[str, dict]:
@@ -47,7 +48,8 @@ def strip(src: str, tag: str, out_dir: str) -> tuple[str, dict]:
     fn = release_name(tag, a["family"], a["hw"], a["seed"])
     if fn in RELEASES:
         m = RELEASES[fn]
-        assert (m["family"], tuple(m["hw"]), m["seed"]) == (a["family"], tuple(int(v) for v in a["hw"]), int(a["seed"])), (fn, a)
+        assert (m["family"], tuple(m["hw"]), m["seed"], m["epochs"]) == (a["family"], tuple(int(v) for v in a["hw"]), int(a["seed"]),
+                                                                       int(a["epochs"])), (fn, a)
     dst = os.path.join(out_dir, fn)
     torch.save(sd, dst)
     torch.load(dst, map_location="cpu", weights_only=True)

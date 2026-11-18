@@ -20,10 +20,6 @@ release_assets/*
 *.engine
 *.trt
 
-# zone-alert app: generated caches and renders
-apps/zone_alert/cache/
-apps/zone_alert/out/
-
 # Jetson export folder (ONNX files are rebuilt by deploy/jetson/export_onnx.py)
 deploy/jetson/export/
 

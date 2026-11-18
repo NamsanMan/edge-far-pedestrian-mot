@@ -11,8 +11,13 @@ appears again later in the log is a repeated pass (the drift check of bench.sh -
 Models listed in MODELS get their description; OTHER holds the designs measured in the same session whose code is not in
 this repository (shown in a separate table); unknown names are reported as-is.
 
+The detector comparison session (--detectors, default results/bench_2026-11-13.log when no LOG is given) goes to
+results/latency_orin_nano_detectors.csv (read by results/DETECTORS.md) and a closing section of the .md; its graphs are
+described by MODELS or DETECTORS.
+
 usage (repository root):
     python -B deploy/jetson/parse_results.py [deploy/jetson/results/bench_2026-10-27.log] [--out deploy/jetson/results] [--trt 10.3]
+           [--detectors deploy/jetson/results/bench_2026-11-13.log | '']
 """
 from __future__ import annotations
 
@@ -44,6 +49,17 @@ OTHER = {
     "v8n_416_mxxr_canvas": ("YOLOv8n + shallow x-fine P3 branch (MatrixNets-style, FLOPs matched to S3x)", "416 x 320"),
     "v8n_416_casp_canvas": ("YOLOv8n + two half-width P3 branches (x-fine and y-fine)", "416 x 320"),
 }
+# graph name -> model of the detector comparison session (DSEC-trained, 416 x 320 canvas, raw head output before NMS)
+DETECTORS = {
+    "v8s_416_canvas": "YOLOv8s",
+    "y11n_416_canvas": "YOLO11n",
+    "y26n_416_canvas": "YOLO26n (one-to-one head, every anchor decoded, no top-k)",
+    "yoloxn_416_canvas": "YOLOX-Nano",
+    "yoloxt_416_canvas": "YOLOX-Tiny",
+    "nanodet_416_canvas": "NanoDet-Plus-m (without the auxiliary training head)",
+    "rtdetrl_416_canvas": "RT-DETR-L (300 decoder queries, NMS-free)",
+}
+LOG, DET_LOG = (os.path.join(HERE, "results", f) for f in ("bench_2026-10-27.log", "bench_2026-11-13.log"))
 FIELDS = ["graph", "model", "trained_on", "canvas_wxh", "input", "precision", "pass", "min_ms", "max_ms", "mean_ms",
           "median_ms"]
 
@@ -63,6 +79,8 @@ def parse(log: str) -> tuple[list[dict], str]:
             seen[(graph, prec)] = seen.get((graph, prec), 0) + 1
             if graph in MODELS:
                 model, data, canvas, inp = MODELS[graph]
+            elif graph in DETECTORS:
+                model, data, canvas, inp = DETECTORS[graph], "DSEC", "416 x 320", "canvas"
             else:                              # other designs (DSEC-trained) or an unknown graph
                 model, canvas = OTHER.get(graph, (graph, "?"))
                 data, inp = "DSEC", "canvas"
@@ -85,7 +103,7 @@ def markdown(rows: list[dict], power: str, log: str, trt: str) -> str:
            f"Device: Jetson Orin Nano, power mode `{power or 'not recorded'}`, TensorRT {trt} (`trtexec --warmUp=500 "
            f"--duration=10 --useSpinWait`). Source: `{os.path.basename(log)}`, parsed by `parse_results.py`.", "",
            "**What is timed:** the GPU compute time of the detector engine alone (trtexec), batch 1, raw head output. "
-           "Pre-processing on the CPU, NMS, tracking and the zone logic are not included. `native` graphs take the "
+           "Pre-processing on the CPU, NMS and tracking are not included. `native` graphs take the "
            "camera frame and do the letterbox resize inside the engine.", "",
            "**INT8:** the engines were built with `--int8 --fp16` and no calibration set, so the INT8 rows are "
            "latency only. No accuracy is claimed for them.", "",
@@ -121,21 +139,56 @@ def markdown(rows: list[dict], power: str, log: str, trt: str) -> str:
     return "\n".join(out) + "\n"
 
 
+def detectors_markdown(rows: list[dict], power: str, log: str, ref: list[dict]) -> str:
+    """Closing section of the .md: the detector comparison session (rows) with its drift check against its own repeat
+    and against the first passes of the main session (ref)."""
+    first = {(r["graph"], r["precision"]): r for r in rows if r["pass"] == 1}
+    out = ["", f"**Detector comparison, second session** (`{os.path.basename(log)}`, power mode `{power or 'not recorded'}`, "
+           "same trtexec settings): DSEC-trained detectors on the 416 x 320 canvas; every graph takes the canvas input of "
+           "`export_onnx.py` and ends in the family's raw head output before NMS. YOLOv8n, YOLOv8n + S3x and YOLO11n are "
+           "model families of this repository; the other detectors come from their own implementations, whose code is not "
+           "part of this repository. Their tracking accuracy: `results/DETECTORS.md`.", "",
+           "| model | canvas (W x H) | precision | median [ms] |", "|---|---|---|---|"]
+    for r in first.values():
+        out.append(f"| {r['model']} | {r['canvas_wxh']} | {r['precision'].upper()} | {r['median_ms']:.2f} |")
+    rep = [r for r in rows if r["pass"] > 1]
+    old = [r for r in ref if r["pass"] == 1 and (r["graph"], r["precision"]) in first]
+    if rep:
+        line = "Drift check: timed again at the end of this session, interleaved: " + ", ".join(
+            f"{r['model']} {first[(r['graph'], r['precision'])]['median_ms']:.2f} -> {r['median_ms']:.2f} ms" for r in rep)
+        if old:
+            line += ". The first session timed the same ONNX graphs at " + " and ".join(
+                f"{r['median_ms']:.2f} ms ({r['model']})" for r in old)
+        out += ["", line + "."]
+    return "\n".join(out) + "\n"
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
-    ap.add_argument("log", nargs="?", default=os.path.join(HERE, "results", "bench_2026-10-27.log"))
+    ap.add_argument("log", nargs="?", default=None, help="bench.log (default: results/bench_2026-10-27.log)")
     ap.add_argument("--out", default=os.path.join(HERE, "results"))
     ap.add_argument("--trt", default="10.3", help="TensorRT version printed in the trtexec logs")
+    ap.add_argument("--detectors", default=None, help="bench.log of the detector comparison session (default: "
+                    "results/bench_2026-11-13.log when LOG is not given; '' = none)")
     a = ap.parse_args()
-    rows, power = parse(a.log)
+    log = a.log or LOG
+    det = a.detectors if a.detectors is not None else ("" if a.log else DET_LOG)
+    rows, power = parse(log)
+    md = markdown(rows, power, log, a.trt)
     os.makedirs(a.out, exist_ok=True)
-    with open(os.path.join(a.out, "latency_orin_nano.csv"), "w", newline="", encoding="utf-8") as fh:
-        w = csv.DictWriter(fh, FIELDS, lineterminator="\n")
-        w.writeheader()
-        w.writerows(rows)
-    with open(os.path.join(a.out, "latency_orin_nano.md"), "w", encoding="utf-8") as fh:
-        fh.write(markdown(rows, power, a.log, a.trt))
-    print(f"{len(rows)} rows -> {a.out}/latency_orin_nano.csv, .md")
+    outs = [("latency_orin_nano.csv", rows)]
+    if det:
+        drows, dpower = parse(det)
+        md += detectors_markdown(drows, dpower, det, rows)
+        outs.append(("latency_orin_nano_detectors.csv", drows))
+    for name, rs in outs:
+        with open(os.path.join(a.out, name), "w", newline="", encoding="utf-8") as fh:
+            w = csv.DictWriter(fh, FIELDS, lineterminator="\n")
+            w.writeheader()
+            w.writerows(rs)
+    with open(os.path.join(a.out, "latency_orin_nano.md"), "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(md)
+    print(f"{sum(len(rs) for _, rs in outs)} rows -> {a.out}: {', '.join(n for n, _ in outs)}, latency_orin_nano.md")
 
 
 if __name__ == "__main__":

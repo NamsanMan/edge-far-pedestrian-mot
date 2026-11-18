@@ -11,10 +11,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from efpmot import dataset_of_tag  # noqa: E402
 from efpmot.models import FAMILIES  # noqa: E402
-from efpmot.release import RELEASES, RUN_TO_FILE, release_meta  # noqa: E402
-from efpmot.train import TRAIN_DEFAULTS  # noqa: E402
+from efpmot.release import RELEASES, RUN_TO_FILE, dataset_of_run, release_meta  # noqa: E402
+from efpmot.train import TRAIN_DEFAULTS, default_epochs  # noqa: E402
 
 
 class _Args:   # a non-tensor object, as in the "args" of a training checkpoint
@@ -53,11 +52,14 @@ class TestRelease(unittest.TestCase):
         self.assertEqual(len(RUN_TO_FILE), len(RELEASES))
         for fn, m in RELEASES.items():
             self.assertIn(m["family"], FAMILIES)
-            self.assertEqual(dataset_of_tag(m["run"]), m["dataset"])
-            self.assertEqual(tuple(m["hw"]), tuple(TRAIN_DEFAULTS[m["dataset"]]["hw"]))
-            self.assertEqual(m["epochs"], TRAIN_DEFAULTS[m["dataset"]]["epochs"])
+            self.assertEqual(dataset_of_run(m["run"]), m["dataset"])
+            data, _, split = m["dataset"].partition("-")   # HIT-UAV: 'hituav-<fold>'
+            self.assertEqual(tuple(m["hw"]), tuple(TRAIN_DEFAULTS[data]["hw"]))
+            self.assertEqual(m["epochs"], default_epochs(data, split or None))
             self.assertTrue(m["run"].endswith(f"_s{m['seed']}"))
             self.assertEqual(release_meta(os.path.join("any", "dir", fn))["run"], m["run"])
+            if data == "hituav":   # the app's person threshold (val max F1, results/hituav/<run>.json)
+                self.assertTrue(0.0 < m["thr"] < 1.0)
         self.assertIsNone(release_meta("last.pth"))
 
     def test_packager_names(self):
@@ -67,6 +69,8 @@ class TestRelease(unittest.TestCase):
         # a run outside the table gets the same naming scheme
         self.assertEqual(release_name("dsec_v8n_416s3y_s1", "yolov8n_s3y", [320, 416], 1), "yolov8n_s3y_dsec_416x320_s1.pt")
         self.assertEqual(release_name("dsec_y11n_416_s0", "yolo11n", [320, 416], 0), "yolo11n_plain_dsec_416x320_s0.pt")
+        self.assertEqual(release_name("hit_v8n_416s3xaltLH_s1", "yolov8n_s3x", [320, 416], 1), "yolov8n_s3x_hituav-altLH_416x320_s1.pt")
+        self.assertEqual(release_name("hit_v8n_416_s2", "yolov8n", [320, 416], 2), "yolov8n_plain_hituav_416x320_s2.pt")
 
 
 if __name__ == "__main__":

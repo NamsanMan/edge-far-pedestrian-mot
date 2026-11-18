@@ -23,10 +23,10 @@ def jobs_from_contrasts(path: str, eval_root: str) -> list[tuple[str, str, str, 
     transferred-margin status (VisDrone / MOT17 ByteTrack)"""
     want = set()
     for c in yaml.safe_load(open(path, encoding="utf-8")):
-        for var in (c["a"], c["b"]):
+        for det, var in ((c["det"], c["a"]), (c.get("det_b", c["det"]), c["b"])):  # det_b: arm B of another detector
             for cls in c["classes"]:
                 for trk in P.TRACKERS:
-                    want.add((c["dataset"], c["det"], str(var), trk, cls))
+                    want.add((c["dataset"], det, str(var), trk, cls))
     for data, (arms, cls) in P.TRANSFERRED_MARGIN.items():
         for det, var in arms:
             want.add((data, det, var, "bytetrack", cls))

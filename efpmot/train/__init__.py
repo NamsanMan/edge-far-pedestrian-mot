@@ -5,7 +5,8 @@
 Recipe of every published run: COCO-pretrained start, batch 16 frame pairs (the detector loss uses the current frame), AdamW
 (weight decay 5e-4 on weights with ndim > 1, 0 on biases / BN; betas 0.9 / 0.999; lr = round(0.002 * 5 / (4 + nc), 6) =
 0.000833 for nc = 8), linear warm-up over min(500, iterations per epoch) from 0.1 x lr, then cosine to 0.05 x lr, FP16 autocast
-with a GradScaler, gradient-norm clip 10. Epochs: 6 (DSEC, VisDrone, BDD100K), 55 (MOT17, iterations matched to the others).
+with a GradScaler, gradient-norm clip 10. Epochs: 6 (DSEC, VisDrone, BDD100K), 55 (MOT17, iterations matched to the others);
+HIT-UAV: the same ~9,060-iteration budget per split (official 72, recA 116, recB 118, altLH 112; efpmot/data/hituav.py decision 3).
 """
 from __future__ import annotations
 
@@ -24,8 +25,16 @@ from ..data import get as get_data, letterbox, train_dataset
 from ..models import build
 
 TRAIN_DEFAULTS = {"dsec": dict(hw=(320, 416), epochs=6), "mot17": dict(hw=(256, 416), epochs=55),
-                  "visdrone": dict(hw=(384, 640), epochs=6), "bdd": dict(hw=(256, 416), epochs=6)}
-CFG_DEFAULTS = dict(bs=16, workers=4, seed=0, dsec_stride=2, vis_stride=None, max_iters=0, export=True, device="cuda")
+                  "visdrone": dict(hw=(384, 640), epochs=6), "bdd": dict(hw=(256, 416), epochs=6),
+                  # epochs per split = round(9060 / (train images // 16)): 2,029 / 1,263 / 1,237 / 1,305 images
+                  "hituav": dict(hw=(320, 416), epochs=72, split_epochs=dict(official=72, recA=116, recB=118, altLH=112))}
+CFG_DEFAULTS = dict(bs=16, workers=4, seed=0, dsec_stride=2, vis_stride=None, split=None, max_iters=0, export=True, device="cuda")
+
+
+def default_epochs(data: str, split: str | None = None) -> int:
+    """TRAIN_DEFAULTS epochs of a dataset (HIT-UAV: of the split, default official)"""
+    d = TRAIN_DEFAULTS[data]
+    return int(d.get("split_epochs", {}).get(split or "official", d["epochs"]))
 
 
 def _cfg(cfg) -> dict:
@@ -35,18 +44,25 @@ def _cfg(cfg) -> dict:
             raise ValueError(f"train(): '{k}' is required")
     for k, v in CFG_DEFAULTS.items():
         c.setdefault(k, v)
+    if c["data"] == "hituav":
+        from ..data import hituav
+        c["split"] = c.get("split") or "official"
+        hituav.check_tag(c["name"], c["split"])   # a fold run carries its fold marker, an official run none
+    elif c.get("split"):
+        raise ValueError(f"train(): 'split' is a HIT-UAV option (data {c['data']!r})")
     d = TRAIN_DEFAULTS[c["data"]]
     c["hw"] = list(c.get("hw") or d["hw"])
-    c["epochs"] = int(c.get("epochs") or d["epochs"])
+    c["epochs"] = int(c.get("epochs") or default_epochs(c["data"], c.get("split")))
     return c
 
 
 def train(cfg) -> str:
     """cfg (dict or argparse.Namespace): family, data, name, hw (H, W), epochs, bs=16, workers=4, seed=0, dsec_stride=2,
-    vis_stride=None (-> 1), max_iters=0 (smoke test: stop after N iterations, no checkpoint / export), export=True,
-    device="cuda" (the published recipe: FP16 autocast + GradScaler; "cpu" runs FP32 without scaling, for smoke tests only).
-    Writes <runs>/<name>/{last.pth (after every epoch), log.txt} and, when export, the detection cache of the evaluation
-    frames. Returns the run directory."""
+    vis_stride=None (-> 1), split=None (HIT-UAV: official | recA | recB | altLH, default official; the run name must carry the
+    fold marker, e.g. hit_v8n_416s3xrecA_s0), max_iters=0 (smoke test: stop after N iterations, no checkpoint / export),
+    export=True, device="cuda" (the published recipe: FP16 autocast + GradScaler; "cpu" runs FP32 without scaling, for smoke
+    tests only). Writes <runs>/<name>/{last.pth (after every epoch), log.txt} and, when export, the detection cache of the
+    evaluation frames. Returns the run directory."""
     a = _cfg(cfg)
     torch.manual_seed(a["seed"])
     np.random.seed(a["seed"])
@@ -74,6 +90,12 @@ def train(cfg) -> str:
     elif data == "mot17":
         ds = train_dataset("mot17", size_hw)
         P(f"mot17 train: {len(ds.labels)} seqs, training halves {sum(len(v) for v in ds.frames.values())} frames, max_objs {ds.max_objs}")
+    elif data == "hituav":
+        ds = train_dataset("hituav", size_hw, split=a["split"])
+        hit = get_data("hituav")
+        P(f"hituav train: split {a['split']}, {len(ds)} images, {ds.n_boxes} target boxes ({ds.n_dontcare} DontCare boxes dropped), "
+          f"{len(ds) // a['bs']} iterations / epoch at batch {a['bs']}, epochs for the {hit.ITER_BUDGET}-iteration budget "
+          f"{hit.train_epochs(len(ds), a['bs'])} (this run: {a['epochs']}), max_objs {ds.max_objs}")
     else:
         ds = train_dataset("bdd", size_hw)
     ds.load_prev = False   # the detector loss uses the current frame only (same frames, targets and random draws)
@@ -127,21 +149,28 @@ def train(cfg) -> str:
         P(f"== epoch {ep} done: " + " ".join(f"{k}={v / len(dl):.3f}" for k, v in agg.items()) + f" time {time.time() - t0:.0f}s")
         torch.save({"model": ad.model.state_dict(), "epoch": ep, "args": dict(a)}, os.path.join(run_dir, "last.pth"))
     if a["export"]:
-        export_dets(ad, a["name"], data, size_hw, device=dev)
+        export_dets(ad, a["name"], data, size_hw, device=dev, split=a["split"])
     P("TRAIN_DONE", a["name"])
     log.close()
     return run_dir
 
 
 @torch.no_grad()
-def export_dets(adapter, name: str, data: str, size_hw, conf: float = 0.01, nms: float = 0.65, max_det: int = 300,
-                device: str = "cuda", seqs: list[str] | None = None) -> str:
+def export_dets(adapter, name: str, data: str, size_hw, conf: float | None = None, nms: float = 0.65, max_det: int = 300,
+                device: str = "cuda", seqs: list[str] | None = None, split: str | None = None) -> str:
     """detection cache of the evaluation frames -> <cache>/<name>/<data>/<seq>.npz (frames = image file names, dets[i] =
     float32 [N, 6] x1, y1, x2, y2 (native px, clipped to the image), score, class index). Letterbox to size_hw, batch 1, FP16
-    autocast, one class per anchor (max score), conf >= conf, class-wise NMS, at most max_det boxes. seqs: export only these
-    evaluation sequences (default: all of them). Returns the folder."""
+    autocast, one class per anchor (max score), conf >= conf, class-wise NMS, at most max_det boxes. conf default 0.01 (HIT-UAV:
+    0.001, hituav.EXPORT_CONF). seqs: export only these evaluation sequences (default: all of them). split: HIT-UAV only, the
+    split whose val / test parts are exported (official | recA | recB | altLH; the 'sequences' are val and test). Returns the
+    folder."""
     import torchvision
     mod = get_data(data)
+    if split is not None:
+        if not hasattr(mod, "view"):
+            raise ValueError(f"split is a HIT-UAV option (data {data!r})")
+        mod = mod.view(split)
+    conf = getattr(mod, "EXPORT_CONF", 0.01) if conf is None else conf
     out_dir = paths.out("cache", name, data)
     cuda = device.startswith("cuda")
     adapter.model.to(device)

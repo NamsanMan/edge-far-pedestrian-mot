@@ -28,7 +28,7 @@ Same detector, same canvas, same training schedule; only the P3 grid differs (S3
 
 ## S3x against a uniform canvas of the same cost
 
-S3x adds about 11 % FLOPs. The fair question is whether spending them on a slightly larger uniform canvas does as well. Each compute-matched canvas is a uniform letterbox canvas whose FLOPs are within a few per cent of those of S3x: 0 to 7 % more, VisDrone 0.8 % less ("matched" means matched on FLOPs, not on latency). Same detector, schedule and number of seeds.
+S3x adds about 11 % FLOPs. The fair question is whether spending them on a slightly larger uniform canvas does as well. Each compute-matched canvas is a uniform letterbox canvas whose FLOPs are within a few per cent of those of S3x: 4 to 7 % more, VisDrone 0.8 % less ("matched" means matched on FLOPs, not on latency). Same detector, schedule and number of seeds.
 
 | data | detector | S3x canvas | uniform canvas | GFLOPs S3x / uniform | class | ByteTrack d [95 % CI] | p | OC-SORT d [95 % CI] | p |
 |---|---|---|---|---|---|---|---|---|---|
@@ -41,9 +41,9 @@ S3x adds about 11 % FLOPs. The fair question is whether spending them on a sligh
 | BDD100K | YOLO11n | 416x256 | 480x256 | 1.865 / 1.939 | car | -0.14 [-0.39, +0.14] n.s. | 0.174 | -0.17 [-0.56, +0.18] n.s. | 0.437 |
 | BDD100K | YOLO11n | 416x256 | 480x256 | 1.865 / 1.939 | pedestrian | **+0.64 [-0.06, +1.33]** | 0.008 | +0.57 [-0.31, +1.42] n.s. | 0.126 |
 
-- Pedestrians: S3x beats the same-cost canvas on DSEC and BDD100K (YOLO11n on BDD100K: ByteTrack only); MOT17 and VisDrone are ties. Cars tie everywhere.
+- Pedestrians: S3x beats the same-cost canvas on DSEC and BDD100K (YOLO11n on BDD100K: ByteTrack only); on MOT17 and VisDrone the difference is not significant. No car difference is significant.
 - Latency is not FLOPs: on the Jetson Orin Nano the 448x352 uniform engine takes 3.13 ms and the S3x engine 3.26 ms (TensorRT FP16, table at the end of this page).
-- A 640-wide uniform canvas (about 2.1x the FLOPs of S3x) still beats S3x (plain 640 minus S3x, ByteTrack / OC-SORT): DSEC car +4.00 / +4.38; DSEC pedestrian +5.25 / +5.10; BDD100K car +3.18 / +3.63; BDD100K pedestrian +3.06 / +3.38.
+- A 640-wide uniform canvas (about 2.1x the FLOPs of S3x) is ahead of S3x (plain 640 minus S3x, ByteTrack / OC-SORT; n.s. = not significant): DSEC car +4.00 / +4.38; DSEC pedestrian +5.25 n.s. / +5.10 n.s.; BDD100K car +3.18 / +3.63; BDD100K pedestrian +3.06 / +3.38.
 
 ## Pre-registered predictions (MOT17, VisDrone)
 

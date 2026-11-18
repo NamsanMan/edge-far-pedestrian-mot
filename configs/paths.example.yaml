@@ -26,6 +26,12 @@ data:
   # BDD100K detection images for training: train2017/*.jpg + annotations/det_train.json (scripts/prepare_data.py bdd)
   bdd_det: data/bdd100k_det
 
+  # HIT-UAV (thermal drone images, detection only): the extracted HIT-UAV folder of the release zip (HIT-UAV.zip, v1.2.1),
+  #   normal_json/{train,val,test}/*.jpg + normal_json/annotations/{train,val,test}.json
+  hituav: data/hituav/HIT-UAV
+  # optional: the video_sample folder of the HIT-UAV GitHub repository (five .mov files), for apps/thermal_watch/demo.py
+  hituav_videos: data/hituav/video_sample
+
 weights:
   # COCO-pretrained Ultralytics checkpoints used as the starting point of every training run
   yolov8n: weights/yolov8n.pt
