@@ -138,9 +138,8 @@ Code: `efpmot/models/aniso.py` (YOLOv8n, `AUpsample`, `AnisoDetect`, `AnisoV8Los
   - batch 16, AdamW, lr 0.000833, weight decay 5e-4;
   - linear warm-up, then a cosine decay to 0.05 x lr;
   - FP16;
-  - each training item is a frame with its previous frame (only the current frame enters the loss), and both get the
-    same augmentation: a horizontal flip, a 0.8-1.2 resize and one brightness gain, then the letterbox. The letterbox
-    rescales the frame to the canvas, so the resize hardly changes object sizes on the canvas: in effect there is no
+  - each training frame gets a horizontal flip, a 0.8-1.2 resize and one brightness gain, then the letterbox. The
+    letterbox rescales the frame to the canvas, so the resize hardly changes object sizes on the canvas: in effect there is no
     scale augmentation;
   - 6 epochs on DSEC, VisDrone and BDD100K; 55 epochs on MOT17, whose training set is about 9 times smaller.
 - **Same tracker for every detector.** ByteTrack (buffer 15 frames, match threshold 0.8) and OC-SORT (max age 15,

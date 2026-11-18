@@ -33,7 +33,7 @@ python -B apps/thermal_watch/tests/test_thermal_watch.py
 ```
 
 [`PORT_VERIFICATION.md`](PORT_VERIFICATION.md) records how this code was checked against the original research outputs,
-with the exact commands and the measured differences.
+with the measured differences.
 
 ## 1. Tables from `results/stats` (no dataset)
 
