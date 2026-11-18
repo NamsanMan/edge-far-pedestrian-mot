@@ -169,7 +169,7 @@ AP, not by F1, P or R at these thresholds.
   (or ask its authors) before you redistribute or build on these files. Attribute DSEC (Gehrig et al., RA-L 2021) and
   DSEC-Detection (Gehrig and Scaramuzza, Nature 2024) when you use or share them.
 - **MOT17 files:** trained on MOT17 data, licensed CC BY-NC-SA 3.0 (https://motchallenge.net).
-  - **For non-commercial research use only**, as required by the MOT17 licence. Do not use them in a commercial
+  - **For non-commercial use only**, as required by the MOT17 licence (CC BY-NC-SA 3.0). Do not use them in a commercial
     product or service.
   - Share derived models under the same terms, with attribution to MOT17 (Milan et al., arXiv:1603.00831).
 - **HIT-UAV files:** trained on HIT-UAV (Suo et al., Scientific Data 2023,
@@ -177,7 +177,8 @@ AP, not by F1, P or R at these thresholds.
   release archive states CC0 1.0). Attribute HIT-UAV when you use or share them. Detecting people from the air is
   regulated in many places: check the privacy and surveillance law that applies before any real use.
 - No dataset images or labels are included in the release.
-- No weights trained on VisDrone or BDD100K are released, because those datasets are for research use only.
+- No weights trained on VisDrone or BDD100K are released: VisDrone states no licence, and the BDD100K licence allows
+  only educational, research and not-for-profit use.
 
 ## Citation
 

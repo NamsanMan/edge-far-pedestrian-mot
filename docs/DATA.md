@@ -15,8 +15,8 @@ says where to get it, what licence it has, where `configs/paths.yaml` expects it
 |---|---|---|---|
 | DSEC + DSEC-Detection | training and evaluation (driving, 640 x 480) | DSEC: CC BY-SA 4.0. DSEC-Detection labels: no licence stated | demo clips without GT boxes; trained weights |
 | MOT17 | training (first halves) and evaluation (second halves) | CC BY-NC-SA 3.0 | demo clips and the grid figure; trained weights (non-commercial) |
-| VisDrone2019-MOT | training and evaluation (drone views) | research use only | numbers only |
-| BDD100K | training (detection images) and evaluation (MOT val) | BDD100K licence, research use only | numbers only, plus a list of image file names |
+| VisDrone2019-MOT | training and evaluation (drone views) | no licence stated (used for research evaluation) | numbers only |
+| BDD100K | training (detection images) and evaluation (MOT val) | BDD100K licence: educational, research and not-for-profit use | numbers only, plus a list of image file names |
 | HIT-UAV | person detection on thermal drone images (the Thermal Watch app) | CC BY 4.0 (GitHub; the release archive's LICENSE: CC0 1.0) | app demo media; trained weights; the recording split |
 
 ## DSEC-Detection (`data.dsec_det`)
@@ -104,7 +104,8 @@ says where to get it, what licence it has, where `configs/paths.yaml` expects it
   - Categories 0 and 11 are ignored regions. GT objects whose box centre lies in one are removed. The pixels of these
     regions and of the removed objects are greyed out in training, and tracker outputs centred in an ignored region are
     dropped before evaluation.
-- **Terms.** Research use only. This repository contains aggregate numbers only: no images, labels or weights.
+- **Terms.** The dataset authors state no licence; it is used here for research evaluation only. This repository
+  contains aggregate numbers only: no images, labels or weights.
 
 ## BDD100K (`data.bdd_mot_val_images`, `data.bdd_mot_val_gt`, `data.bdd_det`)
 
@@ -125,8 +126,8 @@ says where to get it, what licence it has, where `configs/paths.yaml` expects it
     `efpmot/data/splits/bdd_det_train_35k.txt`, the list of the 35,000 image file names used by every BDD run.
   - Without the zip options, only the subset is rebuilt from an existing `<bdd_det>`.
   - The detection val split is not used: its images come from the same videos as the MOT val sequences.
-- **Terms.** Research use only (BDD100K licence). This repository contains aggregate numbers and the subset file-name
-  list only: no images, labels or weights.
+- **Terms.** The BDD100K licence allows educational, research and not-for-profit use. This repository contains
+  aggregate numbers and the subset file-name list only: no images, labels or weights.
 
 ## HIT-UAV (`data.hituav`, `data.hituav_videos`)
 

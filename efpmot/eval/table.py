@@ -394,8 +394,8 @@ def write_md(rows: list[dict], path: str, B: int) -> str:
           "- **Labels**: win / loss iff the Holm-adjusted p_AR < 0.05; otherwise equivalent iff the Holm-adjusted TOST "
           "p < 0.05; otherwise inconclusive. ' <m' marks a significant difference that is smaller than the margin.",
           "- **Seeds**: every arm has 2 or 3 independently trained seeds (listed per row); all of them are used.", "",
-          "VisDrone2019-MOT and BDD100K are research-only datasets: this repository ships numbers for them, no media and no "
-          "weights.", ""]
+          "VisDrone2019-MOT (no licence stated) and BDD100K (licence: educational, research and not-for-profit use): this "
+          "repository ships numbers for them, no media and no weights.", ""]
     with open(path, "w", encoding="utf-8", newline="\n") as fh:
         fh.write("\n".join(L))
     return path

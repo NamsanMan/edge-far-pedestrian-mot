@@ -263,7 +263,7 @@ Eight YOLOv8n checkpoints (seed 0) are published on the GitHub Releases page of 
 
 Put them in `release_assets/` (`sha256sum -c SHA256SUMS.txt`) and load them with
 `efpmot.models.build("yolov8n_s3x", 8, "release_assets/yolov8n_s3x_dsec_416x320_s0.pt")`. The weights carry the terms
-of their training data: the MOT17 files are for non-commercial research use only, the DSEC-Detection labels state no
+of their training data: the MOT17 files are for non-commercial use only (CC BY-NC-SA 3.0), the DSEC-Detection labels state no
 licence, and the HIT-UAV files need attribution (CC BY 4.0; see the model card). No weights trained on VisDrone or
 BDD100K are released.
 
@@ -293,8 +293,9 @@ tests/                unit tests (CPU)
 | `results/` | aggregate evaluation statistics only; no images or labels of any dataset |
 | Release weights | the terms in [`release_assets/MODEL_CARD.md`](release_assets/MODEL_CARD.md) |
 
-No dataset images or labels are redistributed except the derived media listed above. VisDrone and BDD100K are
-research-only datasets: this repository holds numbers for them and nothing else. Third-party software and method
+No dataset images or labels are redistributed except the derived media listed above. VisDrone states no licence
+and the BDD100K licence allows only educational, research and not-for-profit use, so this repository holds numbers
+for them and nothing else. Third-party software and method
 notices: [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md).
 
 ## Citation

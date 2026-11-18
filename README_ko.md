@@ -116,13 +116,13 @@ python -B scripts/evaluate_hituav.py --table                   # HIT-UAV 결과 
 
 ## 가중치
 
-DSEC, MOT17, HIT-UAV(녹화 단위 fold 두 개)로 학습한 YOLOv8n 가중치 8개(기본 모델과 S3x, 시드 0)를 이 저장소의 GitHub Releases에 올려 두었다. 이용 조건은 [`release_assets/MODEL_CARD.md`](release_assets/MODEL_CARD.md)에 있다. MOT17 가중치는 비상업적 연구용으로만 쓸 수 있고, DSEC-Detection 라벨에는 명시된 라이선스가 없으며, HIT-UAV 가중치는 출처를 밝히고 쓴다(CC BY 4.0).
+DSEC, MOT17, HIT-UAV(녹화 단위 fold 두 개)로 학습한 YOLOv8n 가중치 8개(기본 모델과 S3x, 시드 0)를 이 저장소의 GitHub Releases에 올려 두었다. 이용 조건은 [`release_assets/MODEL_CARD.md`](release_assets/MODEL_CARD.md)에 있다. MOT17 가중치는 비상업적 용도로만 쓸 수 있고(CC BY-NC-SA 3.0), DSEC-Detection 라벨에는 명시된 라이선스가 없으며, HIT-UAV 가중치는 출처를 밝히고 쓴다(CC BY 4.0).
 
 ## 라이선스와 데이터 조건
 
 - 코드: AGPL-3.0 (Ultralytics YOLO, BoxMOT가 AGPL-3.0이기 때문이다).
 - DSEC 데모 영상: CC BY-SA 4.0. MOT17에서 만든 영상과 그림: CC BY-NC-SA 3.0(비상업적 이용만). HIT-UAV에서 만든 Thermal Watch 데모 그림·영상과 `sample_videos.json`: CC BY 4.0.
-- VisDrone, BDD100K: 연구용 데이터셋이라 수치만 싣고 영상과 가중치는 배포하지 않는다.
+- VisDrone(라이선스 명시 없음), BDD100K(교육·연구·비영리 목적만 허용): 수치만 싣고 영상과 가중치는 배포하지 않는다.
 
 자세한 내용은 [`README.md`](README.md)의 라이선스 절과 [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md)에 있다.
 
